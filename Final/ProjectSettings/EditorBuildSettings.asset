@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Tiny_Toony_City_Demo/Scenes/MainMenu.unity
+    guid: 5748782a101ab53468399132bdf493af
+  - enabled: 1
+    path: Assets/Tiny_Toony_City_Demo/Scenes/SubMenu.unity
+    guid: 82c03f229703d294881890da452e528b
+  - enabled: 1
+    path: Assets/Tiny_Toony_City_Demo/Scenes/Demo_Scene.unity
+    guid: b32f9224a7f8a6f4eb5a631e4ece1fa9
   m_configObjects: {}
