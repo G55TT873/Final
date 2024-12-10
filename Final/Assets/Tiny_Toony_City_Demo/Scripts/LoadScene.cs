@@ -13,5 +13,16 @@ public class LoadScene : MonoBehaviour
     {
         SceneManager.LoadScene(2);
     }
+    public void Restart()
+    {
+        
+        SceneManager.LoadScene(2);
+    }
+
+    public void BackMainMenu()
+    {
+
+        SceneManager.LoadScene(0);
+    }
 
 }
