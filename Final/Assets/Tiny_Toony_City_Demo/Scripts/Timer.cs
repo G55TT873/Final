@@ -8,10 +8,10 @@ public class Timer : MonoBehaviour
     public TextMeshProUGUI timerText;
     public GameObject finishText;
     public GameObject player;
-    public GameObject pauseButton; // Reference to your Pause Button
+    public GameObject pauseButton; 
     public float timer = 10f;
     private bool isFinished = false;
-    private bool isPaused = false; // Pause state
+    private bool isPaused = false; 
 
     private Vector3 playerInitialPosition;
 
@@ -20,7 +20,6 @@ public class Timer : MonoBehaviour
         finishText.gameObject.SetActive(false);
         playerInitialPosition = player.transform.position;
 
-        // Ensure the game starts unpaused
         Time.timeScale = 1f;
     }
 
@@ -43,13 +42,13 @@ public class Timer : MonoBehaviour
 
         if (isPaused)
         {
-            Time.timeScale = 0f; // Pause the game
-            pauseButton.GetComponentInChildren<TextMeshProUGUI>().text = "Resume"; // Update button text
+            Time.timeScale = 0f;
+            pauseButton.GetComponentInChildren<TextMeshProUGUI>().text = "Resume"; 
         }
         else
         {
             Time.timeScale = 1f; // Resume the game
-            pauseButton.GetComponentInChildren<TextMeshProUGUI>().text = "Pause"; // Update button text
+            pauseButton.GetComponentInChildren<TextMeshProUGUI>().text = "Pause"; 
         }
     }
 
