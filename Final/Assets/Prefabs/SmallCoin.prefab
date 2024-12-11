@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8861131263682795165}
   - component: {fileID: 2657675335122240344}
   - component: {fileID: 6121427668269126965}
+  - component: {fileID: 3604316621890177897}
   m_Layer: 0
   m_Name: SmallCoin
   m_TagString: Untagged
@@ -106,3 +107,17 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -127844609115117539, guid: 5d0dbe9cd045eb6458b6aa0a6ffc0235, type: 3}
+--- !u!114 &3604316621890177897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5120226156837818780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71239d5c650061941965154b9b25e877, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectible: {fileID: 11400000, guid: 8e425f1fb910af942b7fbd1940096703, type: 2}
+  value: 0
