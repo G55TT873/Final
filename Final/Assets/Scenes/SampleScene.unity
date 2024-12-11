@@ -614,7 +614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 101e8e5e3de897f409d3fcf39868a25c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7
+  moveSpeed: 5
   laneDistance: 2
   cameraTransform: {fileID: 330585546}
   zOffset: -5

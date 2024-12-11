@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player")]
     public float moveSpeed = 5f;
     public float laneDistance = 2f;
+    
     [Header("Camera")]
     public Transform cameraTransform;
     public float zOffset = -10f;
@@ -17,11 +18,14 @@ public class PlayerController : MonoBehaviour
     public Transform roadStartPosition;
     public float roadSegmentZOffset = 10f;
 
-    
+    private bool isSliding = false;
+    public Animator animator;
 
     private int currentLane = 0;
     private float targetLanePosition;
     private float laneSwitchSpeed = 10f;
+    private float rotationSpeed = 1f; 
+    private Quaternion targetRotation;
     
     private float roadLength = 100f;
     private GameObject currentRoadSegment;
@@ -30,7 +34,7 @@ public class PlayerController : MonoBehaviour
     private float instantiateDelay = 0.5f;
 
     [Header("Jump")]
-    public float jumpForce = 5f;
+    public float jumpForce = 4f;
     private bool isGrounded = true;
     public LayerMask groundLayer;
     public Transform groundCheck;
@@ -45,11 +49,16 @@ public class PlayerController : MonoBehaviour
     public int coinCount = 0;
     public TextMeshProUGUI coinText;
 
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        //controller = GetComponent<CharacterController>();
         rb.drag = 0;
         rb.angularDrag = 0;
+
+        animator.SetBool("Running", true);
 
         currentRoadSegment = Instantiate(roadSegmentPrefab1, roadStartPosition.position, Quaternion.identity);
         gameOverScreen.SetActive(false);
@@ -69,22 +78,31 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, moveSpeed);
     }
 
+    
+
     private void HandleLaneMovement()
     {
         if (Input.GetKeyDown(KeyCode.A) && currentLane > -1)
         {
-            currentLane--; 
+            currentLane--; // Move to the next left lane
+            animator.SetTrigger("SlideLeft"); // Trigger the left slide animation
         }
 
         if (Input.GetKeyDown(KeyCode.D) && currentLane < 1)
         {
-            currentLane++;
+            currentLane++; // Move to the next right lane
+            animator.SetTrigger("SlideRight"); // Trigger the right slide animation
         }
 
+        // Smoothly transition to the new lane position
         targetLanePosition = currentLane * laneDistance;
-
-        transform.position = new Vector3(Mathf.MoveTowards(transform.position.x, targetLanePosition, laneSwitchSpeed * Time.deltaTime), transform.position.y, transform.position.z);
+        transform.position = new Vector3(
+            Mathf.MoveTowards(transform.position.x, targetLanePosition, laneSwitchSpeed * Time.deltaTime),
+            transform.position.y,
+            transform.position.z
+        );
     }
+
 
     private void HandleJump()
     {
@@ -92,6 +110,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
+            animator.SetTrigger("Jump");
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
@@ -106,7 +125,7 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Trigger") && canInstantiate)
         {
             canInstantiate = false;
-
+ 
             GameObject selectedRoadSegment = SelectRandomRoadSegment();
 
             Vector3 newRoadPosition = new Vector3(currentRoadSegment.transform.position.x, currentRoadSegment.transform.position.y, currentRoadSegment.transform.position.z + roadLength + roadSegmentZOffset);
@@ -120,8 +139,15 @@ public class PlayerController : MonoBehaviour
         }
         else if (other.CompareTag("Obstacle"))
         {
+            Debug.Log($"Collision detected with: {other.name}");
+
+            // Update animator states
+            animator.SetBool("Running", false);
+            animator.SetTrigger("Fall");
+
             HandleGameOver();
         }
+
         else if (other.CompareTag("Coin"))
         {
             CollectCoin(other.gameObject);
@@ -153,12 +179,24 @@ public class PlayerController : MonoBehaviour
     private void HandleGameOver()
     {
         rb.velocity = Vector3.zero;
+
         moveSpeed = 0f;
+
+        // Update animation state
+        animator.SetTrigger("Idle");
 
         gameOverScreen.SetActive(true);
 
-        this.enabled = false;
+        // Delay disabling the script to allow animations to play
+        StartCoroutine(DisableScriptAfterAnimation());
     }
+
+private IEnumerator DisableScriptAfterAnimation()
+{
+    yield return new WaitForSeconds(1.0f); // Adjust based on animation length
+    this.enabled = false;
+}
+
 
     private IEnumerator ResetInstantiationFlag()
     {
