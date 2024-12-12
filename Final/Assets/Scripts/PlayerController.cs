@@ -49,12 +49,13 @@ public class PlayerController : MonoBehaviour
     public int coinCount = 0;
     public TextMeshProUGUI coinText;
 
+    [Header("Timer")]
+    public Timer timer;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        //controller = GetComponent<CharacterController>();
         rb.drag = 0;
         rb.angularDrag = 0;
 
@@ -84,17 +85,16 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.A) && currentLane > -1)
         {
-            currentLane--; // Move to the next left lane
-            animator.SetTrigger("SlideLeft"); // Trigger the left slide animation
+            currentLane--;
+            animator.SetTrigger("SlideLeft");
         }
 
         if (Input.GetKeyDown(KeyCode.D) && currentLane < 1)
         {
-            currentLane++; // Move to the next right lane
-            animator.SetTrigger("SlideRight"); // Trigger the right slide animation
+            currentLane++;
+            animator.SetTrigger("SlideRight");
         }
 
-        // Smoothly transition to the new lane position
         targetLanePosition = currentLane * laneDistance;
         transform.position = new Vector3(
             Mathf.MoveTowards(transform.position.x, targetLanePosition, laneSwitchSpeed * Time.deltaTime),
@@ -141,7 +141,6 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log($"Collision detected with: {other.name}");
 
-            // Update animator states
             animator.SetBool("Running", false);
             animator.SetTrigger("Fall");
 
@@ -164,12 +163,21 @@ public class PlayerController : MonoBehaviour
 
     private void CollectCoin(GameObject coin)
     {
-        coinCount++;
+        Collectible coinData = coin.GetComponent<CollectibleManager>()?.collectible;
+
+        if (coinData != null)
+        {
+            coinCount += coinData.value;
+        }
+        else
+        {
+            Debug.LogWarning("Coin does not have a CoinData attached!");
+        }
 
         UpdateCoinText();
-
         Destroy(coin);
     }
+
 
     private void UpdateCoinText()
     {
@@ -179,21 +187,28 @@ public class PlayerController : MonoBehaviour
     private void HandleGameOver()
     {
         rb.velocity = Vector3.zero;
-
         moveSpeed = 0f;
 
         // Update animation state
         animator.SetTrigger("Idle");
+        // Stop the timer
+        if (timer != null)
+        {
+            timer.StopTimer();
+        }
+
+        TotalBalanceManager.Instance.AddToTotalBalance(coinCount);
 
         gameOverScreen.SetActive(true);
 
-        // Delay disabling the script to allow animations to play
         StartCoroutine(DisableScriptAfterAnimation());
     }
 
+
+
 private IEnumerator DisableScriptAfterAnimation()
 {
-    yield return new WaitForSeconds(1.0f); // Adjust based on animation length
+    yield return new WaitForSeconds(1.0f);
     this.enabled = false;
 }
 

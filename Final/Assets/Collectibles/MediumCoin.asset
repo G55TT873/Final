@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9c671bd32d14ef49b6ea52c3d120bf7, type: 3}
   m_Name: MediumCoin
   m_EditorClassIdentifier: 
-  value: 50
+  value: 5
