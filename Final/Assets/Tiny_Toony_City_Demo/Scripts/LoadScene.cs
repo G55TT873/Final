@@ -16,7 +16,7 @@ public class LoadScene : MonoBehaviour
     public void Restart()
     {
         
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene(4);
     }
 
     public void BackMainMenu()
@@ -27,7 +27,7 @@ public class LoadScene : MonoBehaviour
     public void Shop()
     {
 
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene(4);
     }
 
 }
