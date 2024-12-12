@@ -131,7 +131,7 @@ public class PlayerController : MonoBehaviour
             Vector3 newRoadPosition = new Vector3(currentRoadSegment.transform.position.x, currentRoadSegment.transform.position.y, currentRoadSegment.transform.position.z + roadLength + roadSegmentZOffset);
             currentRoadSegment = Instantiate(selectedRoadSegment, newRoadPosition, Quaternion.identity);
 
-            Destroy(currentRoadSegment, 20f);
+            Destroy(currentRoadSegment, 30f);
 
             Destroy(other.gameObject);
 
