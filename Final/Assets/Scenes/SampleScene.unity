@@ -635,6 +635,7 @@ MonoBehaviour:
   gameOverScreen: {fileID: 937783969}
   coinCount: 0
   coinText: {fileID: 1544840548}
+  totalBalanceText: {fileID: 0}
 --- !u!54 &1173228033
 Rigidbody:
   m_ObjectHideFlags: 0

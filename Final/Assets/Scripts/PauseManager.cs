@@ -54,4 +54,5 @@ public class PauseManager : MonoBehaviour
         Time.timeScale = 1f;
         pauseMenu.SetActive(false);
     }
+
 }

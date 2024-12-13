@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skin: {fileID: 0}
   playerName: Fayrouz
-  speed: 4
-  price: 1350
+  speed: 5
+  price: 0
   playerPrefab: {fileID: 4308452588818007551, guid: 66b4e41a45b19ff4ca70acdc0cff7b03,
     type: 3}
   animatorController: {fileID: 9100000, guid: f4e5156752e9b7245befde04700e141f, type: 2}

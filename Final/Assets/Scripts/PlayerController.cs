@@ -52,10 +52,14 @@ public class PlayerController : MonoBehaviour
     public int coinCount = 0;
     public TextMeshProUGUI coinText;
 
-
+    [Header("Total Balance")]
+    public TextMeshProUGUI totalBalanceText;
+    [Header("Timer")]
+    private Timer timer;
 
     void Start()
     {
+        timer = FindObjectOfType<Timer>();
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren<Animator>();
 
@@ -68,6 +72,9 @@ public class PlayerController : MonoBehaviour
         gameOverScreen.SetActive(false);
 
         UpdateCoinText();
+        int totalBalance = TotalBalanceManager.Instance.LoadTotalBalance();
+        totalBalanceText.text = "Total Balance: " + totalBalance.ToString();
+        
     }
 
 
@@ -182,33 +189,52 @@ public class PlayerController : MonoBehaviour
     }
 
     private void CollectCoin(GameObject coin)
+{
+    // Try to get the CoinData from the coin
+    Collectible collectible = coin.GetComponent<CollectibleManager>()?.collectible;
+
+    if (collectible != null)
     {
-        coinCount++;
-
-        UpdateCoinText();
-
-        Destroy(coin);
+        Debug.Log($"Collected coin: {coin.name} with value: {collectible.value}");
+        coinCount += collectible.value; // Add the coin's value from the ScriptableObject
+        Debug.Log($"New total coin count: {coinCount}");
     }
+    else
+    {
+        Debug.LogWarning($"Coin {coin.name} does not have a Collectible attached!");
+    }
+
+    UpdateCoinText(); // Update the UI
+    Destroy(coin); // Remove the coin from the scene
+}
 
     private void UpdateCoinText()
     {
+        Debug.Log($"Updating coin text: {coinCount}"); // Debug log for UI
         coinText.text = "Coins: " + coinCount.ToString();
     }
 
     private void HandleGameOver()
     {
         rb.velocity = Vector3.zero;
-
         moveSpeed = 0f;
 
         // Update animation state
-        animator.SetTrigger("Idle");
+
+        // Add the current coin count to the total balance
+        TotalBalanceManager.Instance.AddToTotalBalance(coinCount);
+ // Save the updated balance
 
         gameOverScreen.SetActive(true);
-
+        if (timer != null)
+        {
+        timer.StopTimer();
+        }
         // Delay disabling the script to allow animations to play
         StartCoroutine(DisableScriptAfterAnimation());
+        
     }
+
 
 private IEnumerator DisableScriptAfterAnimation()
 {

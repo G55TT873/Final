@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 public class ShopManager : MonoBehaviour
 {
     public Player[] availabeCharacters;
@@ -33,7 +34,7 @@ public class ShopManager : MonoBehaviour
 
 
     public void SelectCharacter()
-{
+    {
     // Ensure that available characters are properly set
     if (availabeCharacters == null || availabeCharacters.Length == 0)
     {
@@ -59,9 +60,39 @@ public class ShopManager : MonoBehaviour
     }
 
     // Load the game scene
-    GameManager.Instance.LoadGameScene();
-}
+        SceneManager.LoadScene(4);
+    }
 
+
+    public void SelectCharacter2()
+    {
+    // Ensure that available characters are properly set
+    if (availabeCharacters == null || availabeCharacters.Length == 0)
+    {
+        Debug.LogError("No characters available.");
+        return;
+    }
+
+    // Ensure PlayerManager is properly initialized before accessing it
+    if (PlayerManager.Instance == null)
+    {
+        Debug.LogError("PlayerManager is not initialized.");
+        return;
+    }
+
+    // Set the selected player in PlayerManager
+    PlayerManager.Instance.SetSelectedPlayer(availabeCharacters[currentIndex]);
+
+    // Ensure GameManager is properly initialized
+    if (GameManager.Instance == null)
+    {
+        Debug.LogError("GameManager is not initialized.");
+        return;
+    }
+
+    // Load the game scene
+        SceneManager.LoadScene(5);
+    }
 
 
 

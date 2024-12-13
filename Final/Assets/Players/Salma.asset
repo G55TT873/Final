@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skin: {fileID: 0}
   playerName: Salma
-  speed: 4
-  price: 1600
+  speed: 8
+  price: 2000
   playerPrefab: {fileID: 5766899229360817147, guid: 73eab4347ad9fe545b78b6cc38f1e5f6,
     type: 3}
   animatorController: {fileID: 9100000, guid: 863e3a801132fcc49862187fb9969db7, type: 2}

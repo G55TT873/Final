@@ -15,7 +15,7 @@ MonoBehaviour:
   skin: {fileID: 0}
   playerName: Marwan
   speed: 12
-  price: 1500
+  price: 5000
   playerPrefab: {fileID: 7883961591779511598, guid: cea8eeef2f1b980428542c722a66091d,
     type: 3}
   animatorController: {fileID: 9100000, guid: c743b9dbf4cbdaf45808d6003380d68e, type: 2}

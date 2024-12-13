@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skin: {fileID: 0}
   playerName: Omar
-  speed: 4
-  price: 1400
+  speed: 6
+  price: 1000
   playerPrefab: {fileID: 5116823545775942313, guid: 5395729529120f145a352da961f3dee8,
     type: 3}
   animatorController: {fileID: 9100000, guid: 4eea1683fca3bf24597ef2adbdc57201, type: 2}
