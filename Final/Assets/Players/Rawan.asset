@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: Rawan
   m_EditorClassIdentifier: 
   skin: {fileID: 0}
-  playerName: 
-  speed: 0
-  price: 0
+  playerName: Rawan
+  speed: 4
+  price: 1450
+  playerPrefab: {fileID: 1135740268041600486, guid: fbf3d8ead85463641bd5fcf4b508a5e0,
+    type: 3}
+  animatorController: {fileID: 9100000, guid: e3e26b3ad08fb304db0fe09d0c6d2ec4, type: 2}

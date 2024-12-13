@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player")]
     public float moveSpeed = 5f;
     public float laneDistance = 2f;
+    private Player playerData;
     
     [Header("Camera")]
     public Transform cameraTransform;
@@ -19,7 +20,9 @@ public class PlayerController : MonoBehaviour
     public float roadSegmentZOffset = 10f;
 
     private bool isSliding = false;
-    public Animator animator;
+
+       
+    private Animator animator; 
 
     private int currentLane = 0;
     private float targetLanePosition;
@@ -49,16 +52,17 @@ public class PlayerController : MonoBehaviour
     public int coinCount = 0;
     public TextMeshProUGUI coinText;
 
-    [Header("Timer")]
-    public Timer timer;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        //animator = playerInstance.GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
+
         rb.drag = 0;
         rb.angularDrag = 0;
-
+        
         animator.SetBool("Running", true);
 
         currentRoadSegment = Instantiate(roadSegmentPrefab1, roadStartPosition.position, Quaternion.identity);
@@ -67,11 +71,41 @@ public class PlayerController : MonoBehaviour
         UpdateCoinText();
     }
 
+    public void SetPlayerData(Player data)
+    {
+        playerData = data;
+
+        // Debugging
+        if (playerData == null)
+        {
+            Debug.LogError("Player data is null.");
+            return;
+        }
+
+        if (playerData.animatorController == null)
+        {
+            Debug.LogError("Animator Controller is not set in player data.");
+        }
+
+        if (animator != null)
+        {
+            animator.runtimeAnimatorController = playerData.animatorController;
+        }
+        else
+        {
+            Debug.LogError("Animator is not assigned.");
+        }
+    }
+
+
     void Update()
     {
+        if(playerData != null)
+        {
         HandleLaneMovement();
         HandleJump();
         FollowPlayerCamera();
+        }
     }
 
     void FixedUpdate()
@@ -85,16 +119,17 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.A) && currentLane > -1)
         {
-            currentLane--;
-            animator.SetTrigger("SlideLeft");
+            currentLane--; // Move to the next left lane
+            animator.SetTrigger("SlideLeft"); // Trigger the left slide animation
         }
 
         if (Input.GetKeyDown(KeyCode.D) && currentLane < 1)
         {
-            currentLane++;
-            animator.SetTrigger("SlideRight");
+            currentLane++; // Move to the next right lane
+            animator.SetTrigger("SlideRight"); // Trigger the right slide animation
         }
 
+        // Smoothly transition to the new lane position
         targetLanePosition = currentLane * laneDistance;
         transform.position = new Vector3(
             Mathf.MoveTowards(transform.position.x, targetLanePosition, laneSwitchSpeed * Time.deltaTime),
@@ -131,7 +166,7 @@ public class PlayerController : MonoBehaviour
             Vector3 newRoadPosition = new Vector3(currentRoadSegment.transform.position.x, currentRoadSegment.transform.position.y, currentRoadSegment.transform.position.z + roadLength + roadSegmentZOffset);
             currentRoadSegment = Instantiate(selectedRoadSegment, newRoadPosition, Quaternion.identity);
 
-            Destroy(currentRoadSegment, 30f);
+            Destroy(currentRoadSegment, 20f);
 
             Destroy(other.gameObject);
 
@@ -141,6 +176,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log($"Collision detected with: {other.name}");
 
+            //Update animator states
             animator.SetBool("Running", false);
             animator.SetTrigger("Fall");
 
@@ -163,21 +199,12 @@ public class PlayerController : MonoBehaviour
 
     private void CollectCoin(GameObject coin)
     {
-        Collectible coinData = coin.GetComponent<CollectibleManager>()?.collectible;
-
-        if (coinData != null)
-        {
-            coinCount += coinData.value;
-        }
-        else
-        {
-            Debug.LogWarning("Coin does not have a CoinData attached!");
-        }
+        coinCount++;
 
         UpdateCoinText();
+
         Destroy(coin);
     }
-
 
     private void UpdateCoinText()
     {
@@ -187,28 +214,21 @@ public class PlayerController : MonoBehaviour
     private void HandleGameOver()
     {
         rb.velocity = Vector3.zero;
+
         moveSpeed = 0f;
 
         // Update animation state
         animator.SetTrigger("Idle");
-        // Stop the timer
-        if (timer != null)
-        {
-            timer.StopTimer();
-        }
-
-        TotalBalanceManager.Instance.AddToTotalBalance(coinCount);
 
         gameOverScreen.SetActive(true);
 
+        // Delay disabling the script to allow animations to play
         StartCoroutine(DisableScriptAfterAnimation());
     }
 
-
-
 private IEnumerator DisableScriptAfterAnimation()
 {
-    yield return new WaitForSeconds(1.0f);
+    yield return new WaitForSeconds(1.0f); // Adjust based on animation length
     this.enabled = false;
 }
 

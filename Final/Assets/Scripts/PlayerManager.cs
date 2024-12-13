@@ -1,21 +1,27 @@
-using System.Collections;
 using UnityEngine;
+
 public class PlayerManager : MonoBehaviour
 {
-
-    public Player player;
-    private string playerName;
-    private Sprite skin;
-    private int speed;
-    private int price;
-
-    void Start()
+    public static PlayerManager Instance { get; private set; } // Singleton reference
+    public Player selectedPlayer; // The selected player
+    
+    void Awake()
     {
-        playerName = player.playerName;
-        skin = player.skin;
-        speed = player.speed;
-        price = player.price;
-
+        // Ensure only one instance of PlayerManager exists across scenes
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Make sure the object persists across scenes
+            Debug.Log("PlayerManager instance set.");
+        }
+        else
+        {
+            Destroy(gameObject); // Destroy duplicate if it exists
+            Debug.Log("Duplicate PlayerManager destroyed.");
+        }
     }
-
+    public void SetSelectedPlayer(Player player)
+    {
+        selectedPlayer = player;
+    }
 }
