@@ -33,31 +33,34 @@ public class ShopManager : MonoBehaviour
 
 
     public void SelectCharacter()
+{
+    // Ensure that available characters are properly set
+    if (availabeCharacters == null || availabeCharacters.Length == 0)
     {
-        // Ensure PlayerManager is properly initialized
-        if (PlayerManager.Instance == null || availabeCharacters == null || availabeCharacters.Length == 0)
-        {
-            Debug.LogError("PlayerManager or available characters are not properly initialized.");
-            return;
-        }
-
-        // Debug log to verify the selected character is valid
-        Debug.Log("Selected character: " + availabeCharacters[currentIndex].name);
-
-        // Set the selected player in PlayerManager
-        PlayerManager.Instance.SetSelectedPlayer(availabeCharacters[currentIndex]);
-
-        // Ensure GameManager is properly initialized
-        if (GameManager.Instance == null)
-        {
-            Debug.LogError("GameManager is not initialized.");
-            return;
-        }
-
-        // Debug log to confirm game scene is being loaded
-        Debug.Log("Loading game scene...");
-        GameManager.Instance.LoadGameScene();
+        Debug.LogError("No characters available.");
+        return;
     }
+
+    // Ensure PlayerManager is properly initialized before accessing it
+    if (PlayerManager.Instance == null)
+    {
+        Debug.LogError("PlayerManager is not initialized.");
+        return;
+    }
+
+    // Set the selected player in PlayerManager
+    PlayerManager.Instance.SetSelectedPlayer(availabeCharacters[currentIndex]);
+
+    // Ensure GameManager is properly initialized
+    if (GameManager.Instance == null)
+    {
+        Debug.LogError("GameManager is not initialized.");
+        return;
+    }
+
+    // Load the game scene
+    GameManager.Instance.LoadGameScene();
+}
 
 
 

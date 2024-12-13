@@ -57,7 +57,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        //animator = playerInstance.GetComponent<Animator>();
         animator = GetComponentInChildren<Animator>();
 
         rb.drag = 0;
@@ -71,30 +70,15 @@ public class PlayerController : MonoBehaviour
         UpdateCoinText();
     }
 
+
     public void SetPlayerData(Player data)
     {
-        playerData = data;
+            playerData = data;
 
-        // Debugging
-        if (playerData == null)
-        {
-            Debug.LogError("Player data is null.");
-            return;
-        }
-
-        if (playerData.animatorController == null)
-        {
-            Debug.LogError("Animator Controller is not set in player data.");
-        }
-
-        if (animator != null)
-        {
-            animator.runtimeAnimatorController = playerData.animatorController;
-        }
-        else
-        {
-            Debug.LogError("Animator is not assigned.");
-        }
+            if (animator != null && data != null && data.animatorController != null)
+            {
+                animator.runtimeAnimatorController = data.animatorController;
+            }
     }
 
 
