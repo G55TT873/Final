@@ -110,17 +110,16 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.A) && currentLane > -1)
         {
-            currentLane--; // Move to the next left lane
-            animator.SetTrigger("SlideLeft"); // Trigger the left slide animation
+            currentLane--;
+            animator.SetTrigger("SlideLeft");
         }
 
         if (Input.GetKeyDown(KeyCode.D) && currentLane < 1)
         {
-            currentLane++; // Move to the next right lane
-            animator.SetTrigger("SlideRight"); // Trigger the right slide animation
+            currentLane++;
+            animator.SetTrigger("SlideRight");
         }
 
-        // Smoothly transition to the new lane position
         targetLanePosition = currentLane * laneDistance;
         transform.position = new Vector3(
             Mathf.MoveTowards(transform.position.x, targetLanePosition, laneSwitchSpeed * Time.deltaTime),
@@ -167,7 +166,6 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log($"Collision detected with: {other.name}");
 
-            //Update animator states
             animator.SetBool("Running", false);
             animator.SetTrigger("Fall");
 
@@ -190,13 +188,12 @@ public class PlayerController : MonoBehaviour
 
     private void CollectCoin(GameObject coin)
 {
-    // Try to get the CoinData from the coin
     Collectible collectible = coin.GetComponent<CollectibleManager>()?.collectible;
 
     if (collectible != null)
     {
         Debug.Log($"Collected coin: {coin.name} with value: {collectible.value}");
-        coinCount += collectible.value; // Add the coin's value from the ScriptableObject
+        coinCount += collectible.value;
         Debug.Log($"New total coin count: {coinCount}");
     }
     else
@@ -204,13 +201,13 @@ public class PlayerController : MonoBehaviour
         Debug.LogWarning($"Coin {coin.name} does not have a Collectible attached!");
     }
 
-    UpdateCoinText(); // Update the UI
-    Destroy(coin); // Remove the coin from the scene
+    UpdateCoinText();
+    Destroy(coin);
 }
 
     private void UpdateCoinText()
     {
-        Debug.Log($"Updating coin text: {coinCount}"); // Debug log for UI
+        Debug.Log($"Updating coin text: {coinCount}");
         coinText.text = "Coins: " + coinCount.ToString();
     }
 
@@ -219,18 +216,14 @@ public class PlayerController : MonoBehaviour
         rb.velocity = Vector3.zero;
         moveSpeed = 0f;
 
-        // Update animation state
 
-        // Add the current coin count to the total balance
         TotalBalanceManager.Instance.AddToTotalBalance(coinCount);
- // Save the updated balance
 
         gameOverScreen.SetActive(true);
         if (timer != null)
         {
         timer.StopTimer();
         }
-        // Delay disabling the script to allow animations to play
         StartCoroutine(DisableScriptAfterAnimation());
         
     }
@@ -238,7 +231,7 @@ public class PlayerController : MonoBehaviour
 
 private IEnumerator DisableScriptAfterAnimation()
 {
-    yield return new WaitForSeconds(1.0f); // Adjust based on animation length
+    yield return new WaitForSeconds(1.0f);
     this.enabled = false;
 }
 

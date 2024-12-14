@@ -23,7 +23,7 @@ public class PauseManager : MonoBehaviour
     }
 
     public void QuitButton(){
-        UnityEngine.SceneManagement.SceneManager.LoadScene(3);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(4);
 
 
     }

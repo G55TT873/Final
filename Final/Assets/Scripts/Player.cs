@@ -10,6 +10,6 @@ public class Player : ScriptableObject
     public int speed;
     public int price;
     public GameObject playerPrefab;
-    public RuntimeAnimatorController animatorController; // The Animator Controller for this player
+    public RuntimeAnimatorController animatorController;
 
 }

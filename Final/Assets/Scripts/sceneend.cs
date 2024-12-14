@@ -5,6 +5,7 @@ public class sceneend : MonoBehaviour
 {
     void OnEnable()
     {
-        SceneManager.LoadScene(3);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex +1);
+
     }
 }

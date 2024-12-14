@@ -5,14 +5,14 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
     
-    public Player selectedPlayer; // The current selected player
+    public Player selectedPlayer;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);  // Optionally persist between scene loads
+            DontDestroyOnLoad(gameObject);
             Debug.Log("PlayerManager initialized.");
         }
         else
@@ -24,6 +24,6 @@ public class PlayerManager : MonoBehaviour
     public void SetSelectedPlayer(Player player)
     {
         selectedPlayer = player;
-        Debug.Log("Player Selected: " + selectedPlayer.name);  // Log to confirm player selection
+        Debug.Log("Player Selected: " + selectedPlayer.name);
     }
 }
