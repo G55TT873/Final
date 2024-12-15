@@ -8,10 +8,16 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float laneDistance = 2f;
     private Player playerData;
-    
+
+    [Header("Power-Up")]
+    public float boostedSpeed = 10f;
+    public float powerUpDuration = 10f;
+    private bool isBoosted = false;
+
     [Header("Camera")]
     public Transform cameraTransform;
     public float zOffset = -10f;
+
     [Header("Road Spawn")]
     public GameObject roadSegmentPrefab1;
     public GameObject roadSegmentPrefab2;
@@ -21,15 +27,14 @@ public class PlayerController : MonoBehaviour
 
     private bool isSliding = false;
 
-       
-    private Animator animator; 
+    private Animator animator;
 
     private int currentLane = 0;
     private float targetLanePosition;
     private float laneSwitchSpeed = 10f;
-    private float rotationSpeed = 1f; 
+    private float rotationSpeed = 1f;
     private Quaternion targetRotation;
-    
+
     private float roadLength = 100f;
     private GameObject currentRoadSegment;
 
@@ -65,7 +70,7 @@ public class PlayerController : MonoBehaviour
 
         rb.drag = 0;
         rb.angularDrag = 0;
-        
+
         animator.SetBool("Running", true);
 
         currentRoadSegment = Instantiate(roadSegmentPrefab1, roadStartPosition.position, Quaternion.identity);
@@ -74,28 +79,31 @@ public class PlayerController : MonoBehaviour
         UpdateCoinText();
         int totalBalance = TotalBalanceManager.Instance.LoadTotalBalance();
         totalBalanceText.text = "Total Balance: " + totalBalance.ToString();
-        
     }
-
 
     public void SetPlayerData(Player data)
     {
-            playerData = data;
+        playerData = data;
 
-            if (animator != null && data != null && data.animatorController != null)
-            {
-                animator.runtimeAnimatorController = data.animatorController;
-            }
+        if (animator != null && data != null && data.animatorController != null)
+        {
+            animator.runtimeAnimatorController = data.animatorController;
+        }
     }
-
 
     void Update()
     {
-        if(playerData != null)
+        if (playerData != null)
         {
-        HandleLaneMovement();
-        HandleJump();
-        FollowPlayerCamera();
+            HandleLaneMovement();
+            HandleJump();
+            FollowPlayerCamera();
+
+            // Handle speed boost activation with the B key
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                StartCoroutine(ActivateSpeedBoost());
+            }
         }
     }
 
@@ -103,8 +111,6 @@ public class PlayerController : MonoBehaviour
     {
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, moveSpeed);
     }
-
-    
 
     private void HandleLaneMovement()
     {
@@ -128,7 +134,6 @@ public class PlayerController : MonoBehaviour
         );
     }
 
-
     private void HandleJump()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
@@ -150,7 +155,7 @@ public class PlayerController : MonoBehaviour
         if (other.CompareTag("Trigger") && canInstantiate)
         {
             canInstantiate = false;
- 
+
             GameObject selectedRoadSegment = SelectRandomRoadSegment();
 
             Vector3 newRoadPosition = new Vector3(currentRoadSegment.transform.position.x, currentRoadSegment.transform.position.y, currentRoadSegment.transform.position.z + roadLength + roadSegmentZOffset);
@@ -171,10 +176,14 @@ public class PlayerController : MonoBehaviour
 
             HandleGameOver();
         }
-
         else if (other.CompareTag("Coin"))
         {
             CollectCoin(other.gameObject);
+        }
+        else if (other.CompareTag("SpeedBoost")) // Handle Speed Boost Power-Up
+        {
+            StartCoroutine(ActivateSpeedBoost());
+            Destroy(other.gameObject);
         }
     }
 
@@ -187,23 +196,37 @@ public class PlayerController : MonoBehaviour
     }
 
     private void CollectCoin(GameObject coin)
-{
-    Collectible collectible = coin.GetComponent<CollectibleManager>()?.collectible;
-
-    if (collectible != null)
     {
-        Debug.Log($"Collected coin: {coin.name} with value: {collectible.value}");
-        coinCount += collectible.value;
-        Debug.Log($"New total coin count: {coinCount}");
-    }
-    else
-    {
-        Debug.LogWarning($"Coin {coin.name} does not have a Collectible attached!");
+        Collectible collectible = coin.GetComponent<CollectibleManager>()?.collectible;
+
+        if (collectible != null)
+        {
+            Debug.Log($"Collected coin: {coin.name} with value: {collectible.value}");
+            coinCount += collectible.value;
+            Debug.Log($"New total coin count: {coinCount}");
+        }
+        else
+        {
+            Debug.LogWarning($"Coin {coin.name} does not have a Collectible attached!");
+        }
+
+        UpdateCoinText();
+        Destroy(coin);
     }
 
-    UpdateCoinText();
-    Destroy(coin);
-}
+    private IEnumerator ActivateSpeedBoost()
+    {
+        if (isBoosted) yield break; // Prevent overlapping boosts
+
+        isBoosted = true;
+        float originalSpeed = moveSpeed;
+        moveSpeed = boostedSpeed;
+
+        yield return new WaitForSeconds(powerUpDuration);
+
+        moveSpeed = originalSpeed;
+        isBoosted = false;
+    }
 
     private void UpdateCoinText()
     {
@@ -216,25 +239,21 @@ public class PlayerController : MonoBehaviour
         rb.velocity = Vector3.zero;
         moveSpeed = 0f;
 
-
         TotalBalanceManager.Instance.AddToTotalBalance(coinCount);
 
         gameOverScreen.SetActive(true);
         if (timer != null)
         {
-        timer.StopTimer();
+            timer.StopTimer();
         }
         StartCoroutine(DisableScriptAfterAnimation());
-        
     }
 
-
-private IEnumerator DisableScriptAfterAnimation()
-{
-    yield return new WaitForSeconds(1.0f);
-    this.enabled = false;
-}
-
+    private IEnumerator DisableScriptAfterAnimation()
+    {
+        yield return new WaitForSeconds(1.0f);
+        this.enabled = false;
+    }
 
     private IEnumerator ResetInstantiationFlag()
     {
