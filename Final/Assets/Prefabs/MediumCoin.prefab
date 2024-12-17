@@ -120,4 +120,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collectible: {fileID: 11400000, guid: 6bf2740f86233924fac1406fdb693ee3, type: 2}
-  value: 0
+  collectEffectPrefab: {fileID: 4575401898228539283, guid: 71b7e096d516491479214c17627d4fdc,
+    type: 3}

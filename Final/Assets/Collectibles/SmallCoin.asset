@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: SmallCoin
   m_EditorClassIdentifier: 
   value: 1
+  collectEffectPrefab: {fileID: 4575401898228539283, guid: 71b7e096d516491479214c17627d4fdc,
+    type: 3}

@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: MediumCoin
   m_EditorClassIdentifier: 
   value: 5
+  collectEffectPrefab: {fileID: 4575401898228539283, guid: 71b7e096d516491479214c17627d4fdc,
+    type: 3}

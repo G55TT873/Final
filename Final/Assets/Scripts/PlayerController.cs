@@ -13,7 +13,9 @@ public class PlayerController : MonoBehaviour
     public float boostedSpeed = 10f;
     public float powerUpDuration = 10f;
     private bool isBoosted = false;
-
+    private bool isCoinX2Active = false;
+    public TextMeshProUGUI powerUpTimerText;
+    
     [Header("Camera")]
     public Transform cameraTransform;
     public float zOffset = -10f;
@@ -185,6 +187,11 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(ActivateSpeedBoost());
             Destroy(other.gameObject);
         }
+        else if (other.CompareTag("CoinX2"))
+        {
+            StartCoroutine(ActivateCoinX2());
+            Destroy(other.gameObject);
+        }
     }
 
     private GameObject SelectRandomRoadSegment()
@@ -201,8 +208,16 @@ public class PlayerController : MonoBehaviour
 
         if (collectible != null)
         {
-            Debug.Log($"Collected coin: {coin.name} with value: {collectible.value}");
-            coinCount += collectible.value;
+            int coinValue = collectible.value;
+            Debug.Log($"Original coin value: {coinValue}");
+            
+            if (isCoinX2Active)
+            {
+                coinValue *= 2;
+                Debug.Log($"CoinX2 Active! Coin value doubled to: {coinValue}");
+            }
+
+            coinCount += coinValue;
             Debug.Log($"New total coin count: {coinCount}");
         }
         else
@@ -214,12 +229,14 @@ public class PlayerController : MonoBehaviour
         Destroy(coin);
     }
 
+
+
     private IEnumerator ActivateSpeedBoost()
     {
-        if (isBoosted) yield break; // Prevent overlapping boosts
+        if (isBoosted) yield break; 
 
         isBoosted = true;
-        float originalSpeed = moveSpeed;
+        float originalSpeed = moveSpeed;    
         moveSpeed = boostedSpeed;
 
         yield return new WaitForSeconds(powerUpDuration);
@@ -227,6 +244,33 @@ public class PlayerController : MonoBehaviour
         moveSpeed = originalSpeed;
         isBoosted = false;
     }
+
+    private IEnumerator ActivateCoinX2()
+    {
+        Debug.Log("CoinX2 effect activated! Coins are doubled for 10 seconds.");
+
+        isCoinX2Active = true;
+
+        float remainingTime = powerUpDuration; // Start with the full duration
+        Debug.Log($"isCoinX2Active set to: {isCoinX2Active}");
+
+        powerUpTimerText.gameObject.SetActive(true); // Show the timer UI
+
+        while (remainingTime > 0)
+        {
+            powerUpTimerText.text = "CoinX2: " + remainingTime.ToString("F1") + "s";
+            remainingTime -= Time.deltaTime; // Reduce time
+            yield return null;
+        }
+
+        isCoinX2Active = false;
+        Debug.Log($"isCoinX2Active set to: {isCoinX2Active}");
+
+        powerUpTimerText.gameObject.SetActive(false); // Hide the timer UI
+        Debug.Log("CoinX2 effect ended! Coins are back to normal.");
+    }
+
+
 
     private void UpdateCoinText()
     {

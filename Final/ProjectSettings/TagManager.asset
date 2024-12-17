@@ -10,6 +10,7 @@ TagManager:
   - Obstcales
   - Coin
   - SpeedBoost
+  - CoinX2
   layers:
   - Default
   - TransparentFX

@@ -21,18 +21,18 @@ public class GameManager : MonoBehaviour
     }
 
     public void LoadGameScene()
-{
-    UnityEngine.SceneManagement.SceneManager.LoadScene("CharacterScene");
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("CharacterScene");
 
-    if (PlayerManager.Instance.selectedPlayer != null)
-    {
-        Instantiate(PlayerManager.Instance.selectedPlayer.playerPrefab, Vector3.zero, Quaternion.identity);
+        if (PlayerManager.Instance.selectedPlayer != null)
+        {
+            Instantiate(PlayerManager.Instance.selectedPlayer.playerPrefab, Vector3.zero, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogError("Selected player is null!");
+        }
     }
-    else
-    {
-        Debug.LogError("Selected player is null!");
-    }
-}
 
 
 
