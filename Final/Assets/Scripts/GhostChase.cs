@@ -1,37 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GhostChase : MonoBehaviour
 {
     public Transform player;
-    private Vector3 initialOffset;
+    public float distanceOffset = 4f;
 
     void Start()
     {
-        if (player != null)
+        player = GameObject.Find("Player(Clone)")?.transform;
+
+        if (player == null)
         {
-            initialOffset = transform.position - player.position;
+            Debug.LogError("Player(Clone) not found in the scene!");
+            return;
         }
-        else
-        {
-            Debug.LogError("Player not assigned");
-        }
+
+        UpdateGhostPosition();
     }
 
     void Update()
     {
-          
-        float playerSpeed = player.GetComponent<Rigidbody>()?.velocity.magnitude ?? 0;
+        player = GameObject.Find("Player(Clone)")?.transform;
+        if (player == null) return;
 
-        float ghostSpeed = playerSpeed * 1.0f;
+        UpdateGhostPosition();
 
-        Vector3 direction = (player.position + initialOffset - transform.position).normalized;
-        transform.position += direction * ghostSpeed * Time.deltaTime;
+        transform.LookAt(new Vector3(player.position.x, transform.position.y, player.position.z));
+    }
 
-        //optional to rotate the ghost to face the player
-        transform.LookAt(player);
-    
+    private void UpdateGhostPosition()
+    {
+        transform.position = new Vector3(
+            player.position.x,
+            transform.position.y,
+            player.position.z - distanceOffset
+        );
     }
 }
-

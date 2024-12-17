@@ -16,7 +16,6 @@ public class Timer : MonoBehaviour
         }
     }
 
-
     private void UpdateTimerUI()
     {
         int minutes = Mathf.FloorToInt(elapsedTime / 60);
@@ -29,10 +28,14 @@ public class Timer : MonoBehaviour
         isRunning = false;
     }
 
-
     public void ResetTimer()
     {
         elapsedTime = 0f;
         UpdateTimerUI();
+    }
+
+    public float GetElapsedTime()
+    {
+        return elapsedTime;
     }
 }

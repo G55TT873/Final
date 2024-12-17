@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Map2.unity
     guid: dd34f981aeef32c489220fde38ccdea7
+  - enabled: 1
+    path: Assets/Scenes/LoosingCutscene.unity
+    guid: 893879a9210b62a4195c3f135dca95b7
   m_configObjects: {}

@@ -1,6 +1,8 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
+using UnityEditor.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
@@ -52,16 +54,15 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody rb;
 
-    [Header("Game Over")]
-    public GameObject gameOverScreen;
 
     [Header("Coin")]
     public int coinCount = 0;
     public TextMeshProUGUI coinText;
 
-    [Header("Total Balance")]
-    public TextMeshProUGUI totalBalanceText;
-    [Header("Timer")]
+    [Header("Sound")]
+    public AudioSource Coin;
+    public AudioSource Speed;
+    public AudioSource Double;
     private Timer timer;
 
     void Start()
@@ -74,13 +75,16 @@ public class PlayerController : MonoBehaviour
         rb.angularDrag = 0;
 
         animator.SetBool("Running", true);
+        GameObject originalPlayer = GameObject.Find("Player");
+        if (originalPlayer != null)
+        {
+            Destroy(originalPlayer);
+        }
 
         currentRoadSegment = Instantiate(roadSegmentPrefab1, roadStartPosition.position, Quaternion.identity);
-        gameOverScreen.SetActive(false);
 
         UpdateCoinText();
         int totalBalance = TotalBalanceManager.Instance.LoadTotalBalance();
-        totalBalanceText.text = "Total Balance: " + totalBalance.ToString();
     }
 
     public void SetPlayerData(Player data)
@@ -101,7 +105,6 @@ public class PlayerController : MonoBehaviour
             HandleJump();
             FollowPlayerCamera();
 
-            // Handle speed boost activation with the B key
             if (Input.GetKeyDown(KeyCode.B))
             {
                 StartCoroutine(ActivateSpeedBoost());
@@ -181,16 +184,19 @@ public class PlayerController : MonoBehaviour
         else if (other.CompareTag("Coin"))
         {
             CollectCoin(other.gameObject);
+            Coin.Play();
         }
-        else if (other.CompareTag("SpeedBoost")) // Handle Speed Boost Power-Up
+        else if (other.CompareTag("SpeedBoost"))
         {
             StartCoroutine(ActivateSpeedBoost());
             Destroy(other.gameObject);
+            Speed.Play();
         }
         else if (other.CompareTag("CoinX2"))
         {
             StartCoroutine(ActivateCoinX2());
             Destroy(other.gameObject);
+            Double.Play();
         }
     }
 
@@ -251,22 +257,22 @@ public class PlayerController : MonoBehaviour
 
         isCoinX2Active = true;
 
-        float remainingTime = powerUpDuration; // Start with the full duration
+        float remainingTime = powerUpDuration;
         Debug.Log($"isCoinX2Active set to: {isCoinX2Active}");
 
-        powerUpTimerText.gameObject.SetActive(true); // Show the timer UI
+        powerUpTimerText.gameObject.SetActive(true);
 
         while (remainingTime > 0)
         {
-            powerUpTimerText.text = "CoinX2: " + remainingTime.ToString("F1") + "s";
-            remainingTime -= Time.deltaTime; // Reduce time
+            powerUpTimerText.text = "" + remainingTime.ToString("F1") + "s";
+            remainingTime -= Time.deltaTime;
             yield return null;
         }
 
         isCoinX2Active = false;
         Debug.Log($"isCoinX2Active set to: {isCoinX2Active}");
 
-        powerUpTimerText.gameObject.SetActive(false); // Hide the timer UI
+        powerUpTimerText.gameObject.SetActive(false);
         Debug.Log("CoinX2 effect ended! Coins are back to normal.");
     }
 
@@ -280,12 +286,17 @@ public class PlayerController : MonoBehaviour
 
     private void HandleGameOver()
     {
+        SceneManager.LoadScene(7);
         rb.velocity = Vector3.zero;
         moveSpeed = 0f;
+        float currentRunTime = timer != null ? timer.GetElapsedTime() : 0f;
+
+        HighScoreManager.Instance.SaveHighScore(currentRunTime);
+        
 
         TotalBalanceManager.Instance.AddToTotalBalance(coinCount);
 
-        gameOverScreen.SetActive(true);
+        
         if (timer != null)
         {
             timer.StopTimer();

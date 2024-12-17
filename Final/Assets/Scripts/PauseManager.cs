@@ -23,7 +23,9 @@ public class PauseManager : MonoBehaviour
     }
 
     public void QuitButton(){
+        Time.timeScale = 1f;
         UnityEngine.SceneManagement.SceneManager.LoadScene(4);
+        
 
 
     }
